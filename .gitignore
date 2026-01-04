@@ -1,0 +1,53 @@
+# ======================
+# Node / JS
+# ======================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ======================
+# Environment variables
+# ======================
+.env
+.env.*
+!.env.example
+
+# ======================
+# Build outputs
+# ======================
+dist/
+build/
+out/
+
+# ======================
+# Vite / React
+# ======================
+frontend/dist/
+frontend/.vite/
+
+# ======================
+# Backend
+# ======================
+backend/node_modules/
+backend/dist/
+
+# ======================
+# TypeScript
+# ======================
+*.tsbuildinfo
+
+# ======================
+# OS / Editor
+# ======================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ======================
+# Logs
+# ======================
+logs/
+*.log
