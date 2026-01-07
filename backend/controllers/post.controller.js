@@ -1,6 +1,10 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import Post from "../models/post.model.js";
+import { Apartment } from '../models/apartment.model.js';
+import { House } from '../models/house.model.js';
+import { Hostel } from '../models/hostel.model.js';
+import { Shop } from '../models/shop.model.js';
 
 export const getAllPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.find();
@@ -12,86 +16,121 @@ export const getAllPosts = catchAsync(async (req, res, next) => {
   });
 });
 
+// export const createPost = catchAsync(async (req, res, next) => {
+//   //  userId comes from auth middleware
+//   // const userId = req.user?.id;
+
+//   // if (!userId) {
+//   //   return res.status(401).json({ message: "Unauthorized" });
+//   //  }
+
+//   const {
+//     userId,
+//     type,
+//     price,
+//     locationName,
+//     location,
+//     photos,
+//     video,
+//     contact,
+//     areaSize,
+//     description,
+//     facilities,
+//     roomType,
+//     houseType,
+//     genderType,
+//     toiletType,
+//     rules
+//   } = req.body;
+
+//   // 🛑 Basic required validation
+//   if (
+//     !type ||
+//     price === undefined ||
+//     !locationName ||
+//     !location ||
+//     !areaSize
+//   ) {
+//     return next(new AppError("Missing required fields", 400));
+//     // return res.status(400).json({
+//     //   message: "Missing required fields"
+//     // });
+//   }
+
+//   // 📍 GeoJSON validation
+//   if (
+//     !location.coordinates ||
+//     !Array.isArray(location.coordinates) ||
+//     location.coordinates.length !== 2
+//   ) {
+//     return next(new AppError("Location coordinates must be [longitude, latitude]", 400));
+//   }
+
+//   // 🧱 Create post
+//   const post = await Post.create({
+//     //userId: new mongoose.Types.ObjectId(userId),
+//     userId,
+//     type,
+//     price,
+//     locationName,
+//     location,
+//     photos,
+//     video,
+//     contact,
+//     areaSize,
+//     description,
+//     facilities,
+//     roomType,
+//     houseType,
+//     genderType,
+//     toiletType,
+//     rules
+//     //  DO NOT set status or lastStatusChangedAt here
+//     // status defaults to "Available"
+//     // lastStatusChangedAt handled by middleware when status becomes "Rented"
+//   });
+
+//   return res.status(201).json({
+//     message: "Post created successfully",
+//     post
+//   });
+// });
+const MODELS = {
+  Apartment,
+  House,
+  Hostel,
+  Shop
+};
+
 export const createPost = catchAsync(async (req, res, next) => {
-  //  userId comes from auth middleware
-  // const userId = req.user?.id;
+  const userId = "659a1b2c3d4e5f6a7b8c9d0e";
+  if (!userId) return next(new AppError("Please login to create a post.", 400));
 
-  // if (!userId) {
-  //   return res.status(401).json({ message: "Unauthorized" });
-  //  }
+  const { type } = req.body;
 
-  const {
-    userId,
-    type,
-    price,
-    locationName,
-    location,
-    photos,
-    video,
-    contact,
-    areaSize,
-    description,
-    facilities,
-    roomType,
-    houseType,
-    genderType,
-    toiletType,
-    rules
-  } = req.body;
-
-  // 🛑 Basic required validation
-  if (
-    !type ||
-    price === undefined ||
-    !locationName ||
-    !location ||
-    !areaSize
-  ) {
-    return next(new AppError("Missing required fields", 400));
-    // return res.status(400).json({
-    //   message: "Missing required fields"
-    // });
+  const SelectedModel = MODELS[type];
+  if (!SelectedModel) {
+    return next(new AppError(`Invalid post type: ${type}. Must be Apartment, House, Hostel, or Shop.`, 400));
   }
 
-  // 📍 GeoJSON validation
-  if (
-    !location.coordinates ||
-    !Array.isArray(location.coordinates) ||
-    location.coordinates.length !== 2
-  ) {
-    return next(new AppError("Location coordinates must be [longitude, latitude]", 400));
+  if (req.body.location?.coordinates) {
+    const [lng, lat] = req.body.location.coordinates;
+    if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+      return next(new AppError("Invalid coordinates. Longitude (-180 to 180) and Latitude (-90 to 90).", 400));
+    }
   }
 
-  // 🧱 Create post
-  const post = await Post.create({
-    //userId: new mongoose.Types.ObjectId(userId),
-    userId,
-    type,
-    price,
-    locationName,
-    location,
-    photos,
-    video,
-    contact,
-    areaSize,
-    description,
-    facilities,
-    roomType,
-    houseType,
-    genderType,
-    toiletType,
-    rules
-    //  DO NOT set status or lastStatusChangedAt here
-    // status defaults to "Available"
-    // lastStatusChangedAt handled by middleware when status becomes "Rented"
+  const post = await SelectedModel.create({
+    ...req.body,
+    userId
   });
 
-  return res.status(201).json({
-    message: "Post created successfully",
-    post
+  res.status(201).json({
+    status: "success",
+    message: `${type} post created successfully`,
+    data: post
   });
 });
-
 
 export const updatePost = catchAsync(async (req, res, next) => {
   const { postId } = req.params;
