@@ -10,21 +10,21 @@ const router = Router();
 router.post(
   "/register",
   [
-    // userName: letters only, min 3 chars
+    // username letters only, min 3 chars
     body("userName")
       .notEmpty().withMessage("User name is required")
       .matches(/^[A-Za-z\s]{3,}$/)
       .withMessage("User name must have at least 3 letters"),
 
-    // email: valid format + unique
-    body("email")
-      .notEmpty().withMessage("Email is required")
-      .isEmail().withMessage("Invalid email format")
-      .custom(async value => {
-        const userData = await User.findOne({ email: value });
-        if (userData) throw new Error("Email already exists");
-        return true;
-      }),
+    // email
+    // body("email")
+    //   .notEmpty().withMessage("Email is required")
+    //   .isEmail().withMessage("Invalid email format"),
+      // .custom(async value => {
+      //   const userData = await User.findOne({ email: value });
+      //   if (userData) throw new Error("Email already exists");
+      //   return true;
+      // }),
 
     // phone: Myanmar phone number example
     body("phone")
@@ -41,7 +41,7 @@ router.post(
     // userRole: only specific values
     body("userRole")
       .optional()
-      .isIn(["Agent", "Normal User", "Admin"])
+      .isIn(["Agent", "Normal User"]) // removed admin
       .withMessage("Invalid user role"),
 
     // address validation

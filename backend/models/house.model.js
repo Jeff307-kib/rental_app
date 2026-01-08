@@ -4,7 +4,8 @@ import mongoose from 'mongoose';
 const houseSchema = new mongoose.Schema({
     floors: {
         type: Number,
-        min: 1
+        min: 1,
+        default: 1
     }, //ဘယ်နှစ်ထပ်လဲ
 
     yardAvailable: { // ခြံဝင်းပါလား

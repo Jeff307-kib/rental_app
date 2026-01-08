@@ -190,7 +190,7 @@ const postSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true,
-    discriminatorKey: "type"
+    discriminatorKey: "type" // type: "Apartment"
 });
 
 postSchema.index({ location: '2dsphere' }); // Without this, location queries will be slow or impossible.

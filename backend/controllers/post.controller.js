@@ -132,6 +132,12 @@ export const createPost = catchAsync(async (req, res, next) => {
   });
 });
 
+export const editPost = catchAsync(async (req, res) => {
+
+  console.log("edited");
+
+});
+
 export const updatePost = catchAsync(async (req, res, next) => {
   const { postId } = req.params;
   const userId = "659a1b2c3d4e5f6a7b8c9d0e";
@@ -140,7 +146,7 @@ export const updatePost = catchAsync(async (req, res, next) => {
   const post = await Post.findById(postId);
 
   if (!post) {
-    return next(new AppError("Post not found.", 404));
+    return next(new AppError("Post not found.", 404))
   }
 
   if (post.userId.toString() !== userId) {

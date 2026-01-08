@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,15 +10,15 @@ const userSchema = new mongoose.Schema(
       trim: true
     },
 
-    email: {
-      type: String,
-      required: [true, "A user must have an email"],
-      unique: true,
-      lowercase: true
-    },
+    // email: {
+    //   type: String,
+    //   required: [true, "A user must have an email"],
+    //   unique: true,
+    //   lowercase: true
+    // },
 
     phone: {
-      type: String,
+      type: [String],
       required: [true, "A user must have a phone number"]
     },
 
@@ -70,10 +70,10 @@ userSchema.statics.register = async function ({
   address = {}
 }) {
   // Check if email already exists
-  const existingUser = await this.findOne({ email });
-  if (existingUser) {
-    throw new Error("Email already exists");
-  }
+  // const existingUser = await this.findOne({ email });
+  // if (existingUser) {
+  //   throw new Error("Email already exists");
+  // }
 
   // Hash password
   const salt = await bcrypt.genSalt(10);
@@ -104,5 +104,4 @@ userSchema.statics.register = async function ({
 
 const User = mongoose.model("User", userSchema);
 
-// ✅ THIS LINE FIXES EVERYTHING
 export default User;
